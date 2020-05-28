@@ -3,9 +3,9 @@ package examples
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/siimtalts/v3-go-sdk"
 	"io/ioutil"
 	"log"
-	scoro "v3-go-sdk"
 
 	"golang.org/x/oauth2"
 )
