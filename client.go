@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"v3-go-sdk/models"
 )
 
 const apiVersion = "v3"
@@ -31,13 +32,27 @@ func (c *APIClient) Update(Endpoint string, id int, Request map[string]string) s
 }
 
 //View object
-func (c *APIClient) View(Endpoint string, id int) string {
+func (c *APIClient) View(model models.ApiModel) string {
+	httpClient := HTTPClient{c.config.siteUrl + "/api/" + apiVersion, c.httpClient}
+	return httpClient.MakePOSTRequest(model.Endpoint()+"/view/"+strconv.Itoa(model.Id()), nil)
+}
+
+// Deprecated
+//ViewLegacy object
+func (c *APIClient) ViewLegacy(Endpoint string, id int) string {
 	httpClient := HTTPClient{c.config.siteUrl + "/api/" + apiVersion, c.httpClient}
 	return httpClient.MakePOSTRequest(Endpoint+"/view/"+strconv.Itoa(id), nil)
 }
 
 //Delete object
-func (c *APIClient) Delete(Endpoint string, id int) string {
+func (c *APIClient) Delete(model models.ApiModel) string {
+	httpClient := HTTPClient{c.config.siteUrl + "/api/" + apiVersion, c.httpClient}
+	return httpClient.MakePOSTRequest(model.Endpoint()+"/delete/"+strconv.Itoa(model.Id()), nil)
+}
+
+// Deprecated
+//Delete object
+func (c *APIClient) DeleteLegacy(Endpoint string, id int) string {
 	httpClient := HTTPClient{c.config.siteUrl + "/api/" + apiVersion, c.httpClient}
 	return httpClient.MakePOSTRequest(Endpoint+"/delete/"+strconv.Itoa(id), nil)
 }
