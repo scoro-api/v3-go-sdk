@@ -68,7 +68,7 @@ func GetAPIClientConfigFromEnvFile() ApiConfig {
 		Scopes:       []string{scope},
 		Endpoint: oauth2.Endpoint{
 			TokenURL: siteURL + "/api/" + apiVersion + "/token",
-			AuthURL:  siteURL + "/api/" + apiVersion + "/auth",
+			AuthURL:  siteURL + "/apiAuth",
 		},
 		RedirectURL: redirectURL,
 	}
