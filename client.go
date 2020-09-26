@@ -32,9 +32,16 @@ func (c *APIClient) Update(Endpoint string, id int, Request map[string]string) s
 }
 
 //View object
-func (c *APIClient) View(model models.ApiModel) string {
+func (c *APIClient) View(model models.ApiModel) models.ApiModel {
 	httpClient := HTTPClient{c.config.siteUrl + "/api/" + apiVersion, c.httpClient}
-	return httpClient.MakePOSTRequest(model.Endpoint()+"/view/"+strconv.Itoa(model.Id()), nil)
+	response := httpClient.MakePOSTRequest(model.Endpoint()+"/view/"+strconv.Itoa(model.Id()), nil)
+
+	err := model.InitFromJSON([]byte(response))
+
+	if err == nil {
+		return model
+	}
+	return model
 }
 
 // Deprecated

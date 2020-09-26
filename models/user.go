@@ -1,6 +1,7 @@
 package models
 
 import (
+	"encoding/json"
 	"google.golang.org/genproto/googleapis/type/date"
 	"google.golang.org/genproto/googleapis/type/datetime"
 )
@@ -172,4 +173,9 @@ func (user *User) SetUserName(userName string) {
 
 func (user *User) Endpoint() string {
 	return "users"
+}
+
+func (user *User) InitFromJSON(bytes []byte) error {
+
+	return json.Unmarshal(bytes, user)
 }

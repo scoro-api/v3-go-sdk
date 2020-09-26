@@ -16,4 +16,5 @@ type ApiModel interface {
 	RawData() map[string]interface{}
 	SetRawData(rawData map[string]interface{})
 	Endpoint() string
+	InitFromJSON(bytes []byte) error
 }
