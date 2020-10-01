@@ -14,11 +14,16 @@ type APIClient struct {
 	httpClient *http.Client
 }
 
-////List request using api client
-//func (c *APIClient) List(Endpoint string, Filters map[string]string) string {
-//	return c.makeScoroAPIRequest("filter", Endpoint, Filters)
-//}
-//
+type apiRequestData struct {
+	Request map[string]interface{} `json:"request,omitempty"`
+	Filter  map[string]interface{} `json:"filter,omitempty"`
+}
+
+func (d *apiRequestData) covertToByteArray() []byte {
+	bytes, _ := json.Marshal(d)
+	return bytes
+}
+
 ////Create object using api client
 //func (c *APIClient) Create(Endpoint string, Request map[string]string) string {
 //	return c.makeScoroAPIRequest("request", Endpoint+"/modify/", Request)
@@ -33,6 +38,20 @@ type APIClient struct {
 func (c *APIClient) View(path string) []byte {
 	httpClient := HTTPClient{c.config.siteUrl + "/api/" + apiVersion, c.httpClient}
 	request := httpClient.MakePOSTRequest(path, nil)
+	return request
+}
+
+//List request using api client
+func (c *APIClient) List(path string, Filters []byte) []byte {
+	var result map[string]interface{}
+	json.Unmarshal(Filters, &result)
+
+	requestData := apiRequestData{
+		Filter: result,
+	}
+
+	httpClient := HTTPClient{c.config.siteUrl + "/api/" + apiVersion, c.httpClient}
+	request := httpClient.MakePOSTRequest(path, requestData.covertToByteArray())
 	return request
 }
 

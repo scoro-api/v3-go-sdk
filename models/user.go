@@ -33,7 +33,7 @@ type User struct {
 	FullName     string `json:"full_name,omitempty"`
 	Initials     string `json:"initials,omitempty"`
 	Email        string `json:"email,omitempty"`
-	Status       status `json:"status,omitempty"`
+	Status       string `json:"status,omitempty"`
 	Birthday     string `json:"birthday,omitempty"`
 	Category     string `json:"category,omitempty"`
 	position     string
@@ -55,6 +55,11 @@ type UserViewResponse struct {
 	Messages interface{} `json:"messages,omitempty"`
 	Data     User        `json:"data,omitempty"`
 }
+type UserListResponse struct {
+	Status   string      `json:"status,omitempty"`
+	Messages interface{} `json:"messages,omitempty"`
+	Data     []User      `json:"data,omitempty"`
+}
 
 func (model *User) FindById(id int) User {
 	bytes := model.client.View("users/view/" + strconv.Itoa(id))
@@ -67,13 +72,13 @@ func (model *User) FindById(id int) User {
 	return user
 }
 
-func (model *User) Find(filter User) User {
-	bytes := model.client.View("users/list/")
+func (model *User) Find(filter User) []User {
+	filterData, _ := json.Marshal(filter)
+	bytes := model.client.List("users/list/", filterData)
 
-	userViewResponse := UserViewResponse{}
-	json.Unmarshal(bytes, &userViewResponse)
-	user := userViewResponse.Data
-	user.SetRawData(bytes)
+	response := UserListResponse{}
+	json.Unmarshal(bytes, &response)
 
-	return user
+	users := response.Data
+	return users
 }
