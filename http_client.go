@@ -35,21 +35,16 @@ func (c *HTTPClient) MakeGETRequest(Path string) string {
 
 //MakePOSTRequest Method to make http GET request
 func (c *HTTPClient) MakePOSTRequest(Path string, Data []byte) []byte {
-
 	response, err := c.HTTPClient.Post(c.BaseURL+"/"+Path, "application/json", bytes.NewBuffer(Data))
 	if err != nil {
 		panic(err)
 	}
 
 	defer response.Body.Close()
-	if response.StatusCode == http.StatusOK {
-		bodyBytes, err := ioutil.ReadAll(response.Body)
-		if err != nil {
-			log.Fatal(err)
-		} else {
-			return bodyBytes
-		}
+	bodyBytes, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	return []byte{}
+	return bodyBytes
 }

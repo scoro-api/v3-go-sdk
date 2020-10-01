@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"google.golang.org/genproto/googleapis/type/date"
 	"google.golang.org/genproto/googleapis/type/datetime"
-	"strconv"
 )
 
 type status string
@@ -51,9 +50,10 @@ type User struct {
 }
 
 type UserViewResponse struct {
-	Status   string      `json:"status,omitempty"`
-	Messages interface{} `json:"messages,omitempty"`
-	Data     User        `json:"data,omitempty"`
+	Status   string                 `json:"status,omitempty"`
+	Messages map[string]interface{} `json:"messages,omitempty"`
+	Errors   map[string]interface{} `json:"errors,omitempty"`
+	Data     User                   `json:"data,omitempty"`
 }
 type UserListResponse struct {
 	Status   string      `json:"status,omitempty"`
@@ -62,7 +62,7 @@ type UserListResponse struct {
 }
 
 func (model *User) FindById(id int) User {
-	bytes := model.client.View("users/view/" + strconv.Itoa(id))
+	bytes := model.client.View("users", id)
 
 	userViewResponse := UserViewResponse{}
 	json.Unmarshal(bytes, &userViewResponse)
@@ -81,4 +81,15 @@ func (model *User) Find(filter User) []User {
 
 	users := response.Data
 	return users
+}
+
+func (model *User) Delete() UserViewResponse {
+	return model.DeleteById(model.Id)
+}
+
+func (model *User) DeleteById(id int) UserViewResponse {
+	bytes := model.client.Delete("users", id)
+	userViewResponse := UserViewResponse{}
+	json.Unmarshal(bytes, &userViewResponse)
+	return userViewResponse
 }

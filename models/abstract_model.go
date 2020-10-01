@@ -2,7 +2,7 @@ package models
 
 import (
 	"encoding/json"
-	scoro "v3-go-sdk"
+	"github.com/siimtalts/v3-go-sdk"
 )
 
 type AbstractModel struct {
