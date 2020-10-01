@@ -25,16 +25,6 @@ func (d *apiRequestData) covertToByteArray() []byte {
 	return bytes
 }
 
-////Create object using api client
-//func (c *APIClient) Create(Endpoint string, Request map[string]string) string {
-//	return c.makeScoroAPIRequest("request", Endpoint+"/modify/", Request)
-//}
-//
-////Update request using api client
-//func (c *APIClient) Update(Endpoint string, id int, Request map[string]string) string {
-//	return c.makeScoroAPIRequest("request", Endpoint+"/modify/"+strconv.Itoa(id), Request)
-//}
-
 //View object
 func (c *APIClient) View(Endpoint string, id int) []byte {
 	httpClient := HTTPClient{c.config.siteUrl + "/api/" + apiVersion, c.httpClient}
@@ -43,16 +33,35 @@ func (c *APIClient) View(Endpoint string, id int) []byte {
 }
 
 //List request using api client
-func (c *APIClient) List(path string, Filters []byte) []byte {
-	var result map[string]interface{}
-	json.Unmarshal(Filters, &result)
+func (c *APIClient) List(endpoint string, Filters []byte) []byte {
+	var filterData map[string]interface{}
+	json.Unmarshal(Filters, &filterData)
 
 	requestData := apiRequestData{
-		Filter: result,
+		Filter: filterData,
 	}
 
 	httpClient := HTTPClient{c.config.siteUrl + "/api/" + apiVersion, c.httpClient}
-	request := httpClient.MakePOSTRequest(path, requestData.covertToByteArray())
+	request := httpClient.MakePOSTRequest(endpoint+"/list", requestData.covertToByteArray())
+	return request
+}
+
+//Create request using api client
+func (c *APIClient) Create(endpoint string, Data []byte) []byte {
+	return c.Update(endpoint, 0, Data)
+}
+
+//Update request using api client
+func (c *APIClient) Update(endpoint string, id int, Data []byte) []byte {
+	var objectData map[string]interface{}
+	json.Unmarshal(Data, &objectData)
+
+	requestData := apiRequestData{
+		Request: objectData,
+	}
+
+	httpClient := HTTPClient{c.config.siteUrl + "/api/" + apiVersion, c.httpClient}
+	request := httpClient.MakePOSTRequest(endpoint+"/modify/"+strconv.Itoa(id), requestData.covertToByteArray())
 	return request
 }
 
@@ -62,21 +71,6 @@ func (c *APIClient) Delete(Endpoint string, id int) []byte {
 	request := httpClient.MakePOSTRequest(Endpoint+"/delete/"+strconv.Itoa(id), nil)
 	return request
 }
-
-//// Deprecated
-////ViewLegacy object
-//func (c *APIClient) ViewLegacy(Endpoint string, id int) string {
-//	httpClient := HTTPClient{c.config.siteUrl + "/api/" + apiVersion, c.httpClient}
-//	return httpClient.MakePOSTRequest(Endpoint+"/view/"+strconv.Itoa(id), nil)
-//}
-//
-////Delete object
-//func (c *APIClient) Delete(model models.ApiModel) string {
-//	httpClient := HTTPClient{c.config.siteUrl + "/api/" + apiVersion, c.httpClient}
-//	return httpClient.MakePOSTRequest(model.Endpoint()+"/delete/"+strconv.Itoa(model.Id()), nil)
-//}
-//
-//// Deprecated
 
 func (c *APIClient) makeScoroAPIRequest(name string, path string, Request map[string]string) []byte {
 	emp := make(map[string]interface{})
