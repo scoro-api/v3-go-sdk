@@ -34,7 +34,7 @@ func (c *HTTPClient) MakeGETRequest(Path string) string {
 }
 
 //MakePOSTRequest Method to make http GET request
-func (c *HTTPClient) MakePOSTRequest(Path string, Data []byte) string {
+func (c *HTTPClient) MakePOSTRequest(Path string, Data []byte) []byte {
 
 	response, err := c.HTTPClient.Post(c.BaseURL+"/"+Path, "application/json", bytes.NewBuffer(Data))
 	if err != nil {
@@ -47,9 +47,9 @@ func (c *HTTPClient) MakePOSTRequest(Path string, Data []byte) string {
 		if err != nil {
 			log.Fatal(err)
 		} else {
-			return string(bodyBytes)
+			return bodyBytes
 		}
 	}
 
-	return ""
+	return []byte{}
 }

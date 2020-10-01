@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"google.golang.org/genproto/googleapis/type/date"
 	"google.golang.org/genproto/googleapis/type/datetime"
+	"strconv"
 )
 
 type status string
@@ -25,15 +26,16 @@ var Status = &statusesList{
 type User struct {
 	AbstractModel
 
-	userName     string
-	firstName    string
-	lastName     string
-	fullName     string
-	initials     string
-	email        string
-	status       status
-	birthday     date.Date
-	category     string
+	Id           int    `json:"id,omitempty"`
+	UserName     string `json:"username,omitempty"`
+	FirstName    string `json:"firstname,omitempty"`
+	LastName     string `json:"lastname,omitempty"`
+	FullName     string `json:"full_name,omitempty"`
+	Initials     string `json:"initials,omitempty"`
+	Email        string `json:"email,omitempty"`
+	Status       status `json:"status,omitempty"`
+	Birthday     string `json:"birthday,omitempty"`
+	Category     string `json:"category,omitempty"`
 	position     string
 	userPicture  string
 	roleId       int
@@ -41,141 +43,37 @@ type User struct {
 	countryId    int
 	gsm          string
 	timezone     datetime.TimeZone
+
+	createdUser  int
+	modifiedUser int
+	createdDate  date.Date
+	modifiedDate date.Date
 }
 
-func (user *User) Timezone() datetime.TimeZone {
-	return user.timezone
+type UserViewResponse struct {
+	Status   string      `json:"status,omitempty"`
+	Messages interface{} `json:"messages,omitempty"`
+	Data     User        `json:"data,omitempty"`
 }
 
-func (user *User) SetTimezone(timezone datetime.TimeZone) {
-	user.timezone = timezone
+func (model *User) FindById(id int) User {
+	bytes := model.client.View("users/view/" + strconv.Itoa(id))
+
+	userViewResponse := UserViewResponse{}
+	json.Unmarshal(bytes, &userViewResponse)
+	user := userViewResponse.Data
+	user.SetRawData(bytes)
+
+	return user
 }
 
-func (user *User) Gsm() string {
-	return user.gsm
-}
+func (model *User) Find(filter User) User {
+	bytes := model.client.View("users/list/")
 
-func (user *User) SetGsm(gsm string) {
-	user.gsm = gsm
-}
+	userViewResponse := UserViewResponse{}
+	json.Unmarshal(bytes, &userViewResponse)
+	user := userViewResponse.Data
+	user.SetRawData(bytes)
 
-func (user *User) CountryId() int {
-	return user.countryId
-}
-
-func (user *User) SetCountryId(countryId int) {
-	user.countryId = countryId
-}
-
-func (user *User) UserGroupIds() []int {
-	return user.userGroupIds
-}
-
-func (user *User) SetUserGroupIds(userGroupIds []int) {
-	user.userGroupIds = userGroupIds
-}
-
-func (user *User) RoleId() int {
-	return user.roleId
-}
-
-func (user *User) SetRoleId(roleId int) {
-	user.roleId = roleId
-}
-
-func (user *User) UserPicture() string {
-	return user.userPicture
-}
-
-func (user *User) SetUserPicture(userPicture string) {
-	user.userPicture = userPicture
-}
-
-func (user *User) Position() string {
-	return user.position
-}
-
-func (user *User) SetPosition(position string) {
-	user.position = position
-}
-
-func (user *User) Category() string {
-	return user.category
-}
-
-func (user *User) SetCategory(category string) {
-	user.category = category
-}
-
-func (user *User) Birthday() date.Date {
-	return user.birthday
-}
-
-func (user *User) SetBirthday(birthday date.Date) {
-	user.birthday = birthday
-}
-
-func (user *User) Status() status {
-	return user.status
-}
-
-func (user *User) SetStatus(status status) {
-	user.status = status
-}
-
-func (user *User) Email() string {
-	return user.email
-}
-
-func (user *User) SetEmail(email string) {
-	user.email = email
-}
-
-func (user *User) Initials() string {
-	return user.initials
-}
-
-func (user *User) SetInitials(initials string) {
-	user.initials = initials
-}
-
-func (user *User) FullName() string {
-	return user.fullName
-}
-
-func (user *User) SetFullName(fullName string) {
-	user.fullName = fullName
-}
-
-func (user *User) LastName() string {
-	return user.lastName
-}
-
-func (user *User) SetLastName(lastName string) {
-	user.lastName = lastName
-}
-
-func (user *User) FirstName() string {
-	return user.firstName
-}
-
-func (user *User) SetFirstName(firstName string) {
-	user.firstName = firstName
-}
-
-func (user *User) UserName() string {
-	return user.userName
-}
-
-func (user *User) SetUserName(userName string) {
-	user.userName = userName
-}
-
-func (user *User) Endpoint() string {
-	return "users"
-}
-
-func (user *User) InitFromJSON(bytes []byte) error {
-
-	return json.Unmarshal(bytes, user)
+	return user
 }
