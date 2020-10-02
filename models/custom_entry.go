@@ -129,8 +129,6 @@ func (model *CustomEntry) Update() {
 	json.Unmarshal(bytes, &CustomViewResponse)
 	newEntry := CustomViewResponse.Data
 
-	fmt.Println(newEntry)
-
 	model.Id = newEntry.Id
 	model.Status = newEntry.Status
 	model.OwnerID = newEntry.OwnerID
