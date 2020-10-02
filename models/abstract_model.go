@@ -31,3 +31,14 @@ func (model *AbstractModel) SetRawDataFromBytes(data []byte) {
 func (model *AbstractModel) SetRawDataFromMap(data map[string]interface{}) {
 	model.rawData = data
 }
+
+func (model *AbstractModel) GetValueFor(key string) interface{} {
+	return model.RawData()[key]
+}
+
+func (model *AbstractModel) SetValueFor(key string, value interface{}) {
+	data := model.RawData()
+	data[key] = value
+
+	model.SetRawDataFromMap(data)
+}

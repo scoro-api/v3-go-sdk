@@ -17,7 +17,7 @@ type CustomEntry struct {
 	DeletedDate  string `json:"deleted_date,omitempty"`
 	IsDeleted    string `json:"is_deleted,omitempty"`
 
-	moduleName string
+	Module string
 }
 
 type CustomViewResponse struct {
@@ -33,28 +33,17 @@ type CustomListResponse struct {
 }
 
 func (model *CustomEntry) ModuleName() string {
-	return model.moduleName
+	return model.Module
 }
 
 func (model *CustomEntry) SetModuleName(moduleName string) {
-	model.moduleName = moduleName
+	model.Module = moduleName
 }
 
 func (model *CustomEntry) validateModule() {
 	if model.ModuleName() == "" {
 		log.Fatal("Module unset, use SetModuleName")
 	}
-}
-
-func (model *CustomEntry) GetValueFor(key string) interface{} {
-	return model.RawData()[key]
-}
-
-func (model *CustomEntry) SetValueFor(key string, value interface{}) {
-	data := model.RawData()
-	data[key] = value
-
-	model.SetRawDataFromMap(data)
 }
 
 func (model *CustomEntry) FindById(id int) CustomEntry {
@@ -64,6 +53,8 @@ func (model *CustomEntry) FindById(id int) CustomEntry {
 	CustomViewResponse := CustomViewResponse{}
 	json.Unmarshal(bytes, &CustomViewResponse)
 	customEntry := CustomViewResponse.Data
+	customEntry.SetModuleName(model.ModuleName())
+	customEntry.SetClient(model.client)
 	customEntry.SetRawDataFromBytes(bytes)
 	return customEntry
 }
@@ -94,7 +85,9 @@ func (model *CustomEntry) Find(filter CustomEntry) []CustomEntry {
 			Id:     id,
 			Status: fmt.Sprintf("%v", customEntryData["status"]),
 		}
+		customEntry.SetModuleName(model.ModuleName())
 		customEntry.SetRawDataFromMap(customEntryData)
+		customEntry.SetClient(model.client)
 		customEntries = append(customEntries, customEntry)
 	}
 

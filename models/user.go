@@ -68,6 +68,7 @@ func (model *User) FindById(id int) User {
 	json.Unmarshal(bytes, &userViewResponse)
 	user := userViewResponse.Data
 	user.SetRawDataFromBytes(bytes)
+	user.SetClient(model.client)
 
 	return user
 }
@@ -80,5 +81,10 @@ func (model *User) Find(filter User) []User {
 	json.Unmarshal(bytes, &response)
 
 	users := response.Data
+
+	for _, user := range users {
+		user.SetClient(model.client)
+	}
+
 	return users
 }
