@@ -10,8 +10,13 @@ import (
 type CustomEntry struct {
 	AbstractModel
 
-	Id         int    `json:"item_id,omitempty"`
-	Status     string `json:"status,omitempty"`
+	Id           int    `json:"item_id,omitempty"`
+	Status       string `json:"status,omitempty"`
+	OwnerID      string `json:"owner_id,omitempty"`
+	ModifiedDate string `json:"modified_date,omitempty"`
+	DeletedDate  string `json:"deleted_date,omitempty"`
+	IsDeleted    string `json:"is_deleted,omitempty"`
+
 	moduleName string
 }
 
@@ -124,8 +129,15 @@ func (model *CustomEntry) Update() {
 	json.Unmarshal(bytes, &CustomViewResponse)
 	newEntry := CustomViewResponse.Data
 
+	fmt.Println(newEntry)
+
 	model.Id = newEntry.Id
 	model.Status = newEntry.Status
+	model.OwnerID = newEntry.OwnerID
+	model.ModifiedDate = newEntry.ModifiedDate
+	model.IsDeleted = newEntry.IsDeleted
+	model.DeletedDate = newEntry.DeletedDate
+
 	model.SetRawDataFromBytes(bytes)
 }
 
