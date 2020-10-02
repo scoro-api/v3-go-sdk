@@ -22,8 +22,12 @@ func (model *AbstractModel) RawData() map[string]interface{} {
 	return model.rawData
 }
 
-func (model *AbstractModel) SetRawData(data []byte) {
+func (model *AbstractModel) SetRawDataFromBytes(data []byte) {
 	var result map[string]map[string]interface{}
 	json.Unmarshal(data, &result)
 	model.rawData = result["data"]
+}
+
+func (model *AbstractModel) SetRawDataFromMap(data map[string]interface{}) {
+	model.rawData = data
 }

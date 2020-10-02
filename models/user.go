@@ -67,29 +67,18 @@ func (model *User) FindById(id int) User {
 	userViewResponse := UserViewResponse{}
 	json.Unmarshal(bytes, &userViewResponse)
 	user := userViewResponse.Data
-	user.SetRawData(bytes)
+	user.SetRawDataFromBytes(bytes)
 
 	return user
 }
 
 func (model *User) Find(filter User) []User {
 	filterData, _ := json.Marshal(filter)
-	bytes := model.client.List("users/list/", filterData)
+	bytes := model.client.List("users", filterData)
 
 	response := UserListResponse{}
 	json.Unmarshal(bytes, &response)
 
 	users := response.Data
 	return users
-}
-
-func (model *User) Delete() UserViewResponse {
-	return model.DeleteById(model.Id)
-}
-
-func (model *User) DeleteById(id int) UserViewResponse {
-	bytes := model.client.Delete("users", id)
-	userViewResponse := UserViewResponse{}
-	json.Unmarshal(bytes, &userViewResponse)
-	return userViewResponse
 }
