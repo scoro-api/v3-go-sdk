@@ -3,11 +3,10 @@ package examples
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/siimtalts/v3-go-sdk"
+	"golang.org/x/oauth2"
 	"io/ioutil"
 	"log"
-
-	"golang.org/x/oauth2"
+	"v3-go-sdk"
 )
 
 func GetExampleScoroApiClient() scoro.APIClient {

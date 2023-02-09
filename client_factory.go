@@ -26,7 +26,7 @@ type ApiConfig struct {
 	siteUrl     string
 }
 
-//GetClient return http.APIClient using the provided oauth2.Config
+// GetClient return http.APIClient using the provided oauth2.Config
 func GetClient(config ApiConfig, client interface{ ApiClientActions }) APIClient {
 	ctx := context.Background()
 	tok := client.FetchTokens()
@@ -46,10 +46,10 @@ func GetClient(config ApiConfig, client interface{ ApiClientActions }) APIClient
 		tok = newToken
 	}
 
-	return APIClient{config, config.oauthConfig.Client(ctx, tok)}
+	return APIClient{config: config, httpClient: config.oauthConfig.Client(ctx, tok), customHeaders: make(map[string]string)}
 }
 
-//GetAPIClientConfigFromEnvFile returns oauth2.Config from .env file
+// GetAPIClientConfigFromEnvFile returns oauth2.Config from .env file
 func GetAPIClientConfigFromEnvFile() ApiConfig {
 	siteURL := getEnvVariable(envSiteURL)
 	clientID := getEnvVariable(envClientID)
