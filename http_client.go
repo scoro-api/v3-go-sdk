@@ -7,13 +7,14 @@ import (
 	"net/http"
 )
 
-//HTTPClient The API connection data
+// HTTPClient The API connection data
 type HTTPClient struct {
-	BaseURL    string
-	HTTPClient *http.Client
+	BaseURL       string
+	HTTPClient    *http.Client
+	customHeaders map[string]string
 }
 
-//MakeGETRequest Method to make http GET request
+// MakeGETRequest Method to make http GET request
 func (c *HTTPClient) MakeGETRequest(Path string) string {
 	response, err := c.HTTPClient.Get(c.BaseURL + "/" + Path)
 	if err != nil {
@@ -33,9 +34,20 @@ func (c *HTTPClient) MakeGETRequest(Path string) string {
 	return ""
 }
 
-//MakePOSTRequest Method to make http GET request
+// MakePOSTRequest Method to make http GET request
 func (c *HTTPClient) MakePOSTRequest(Path string, Data []byte) []byte {
-	response, err := c.HTTPClient.Post(c.BaseURL+"/"+Path, "application/json", bytes.NewBuffer(Data))
+	req, err := http.NewRequest("POST", c.BaseURL+"/"+Path, bytes.NewBuffer(Data))
+	if err != nil {
+		log.Fatal(err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	for key, value := range c.customHeaders {
+		req.Header.Set(key, value)
+	}
+
+	response, err := c.HTTPClient.Do(req)
+
 	if err != nil {
 		panic(err)
 	}
