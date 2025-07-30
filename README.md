@@ -9,5 +9,5 @@
 `SaveTokens` - this method is for saving the OAuth2 tokens. An Oauth tokens object is provided as an input argument.   
 `FetchTokens` - this method is used for fetching extisting OAuth2 tokens, so the Authorization flow could be skipped, if an existing OAuth2 connection has been created previously. It must return an `oauth2.Token` object.
 3. `scoro.GetClient` will return a API client object that has all the CRUD operations implemented. It takes the client config and the implementation of the client factory object as arguments.
-4. You can create the `ApiConfig` object manually, or use the `GetAPIClientConfigFromEnvFile` which can read the connection parameters from an .env file stored in the root directory of Your app which uses this SDK.
+4. You can create the `ApiConfig` object manually, or use the `GetAPIClientConfig`.
 5. See the example client factory implementation in `examples/example_client.go`.

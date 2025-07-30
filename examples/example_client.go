@@ -6,11 +6,19 @@ import (
 	"golang.org/x/oauth2"
 	"io/ioutil"
 	"log"
+	"os"
 	"v3-go-sdk"
 )
 
 func GetExampleScoroApiClient() scoro.APIClient {
-	return scoro.GetClient(scoro.GetAPIClientConfigFromEnvFile(), exampleClient{})
+	return scoro.GetClient(scoro.GetAPIClientConfigFromEnvFile(
+		os.Getenv("SITE_URL"),
+		os.Getenv("CLIENT_ID"),
+		os.Getenv("CLIENT_SECRET"),
+		os.Getenv("SCOPE"),
+		os.Getenv("REDIRECT_URL"),
+		os.Getenv("LANGUAGE"),
+	), exampleClient{})
 }
 
 type exampleClient struct{}

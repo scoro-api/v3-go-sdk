@@ -2,7 +2,6 @@ package scoro
 
 import (
 	"context"
-	"github.com/joho/godotenv"
 	"golang.org/x/oauth2"
 	"log"
 	"os"
@@ -49,17 +48,10 @@ func GetClient(config ApiConfig, client interface{ ApiClientActions }) APIClient
 	return APIClient{config: config, httpClient: config.oauthConfig.Client(ctx, tok), customHeaders: make(map[string]string)}
 }
 
-// GetAPIClientConfigFromEnvFile returns oauth2.Config from .env file
-func GetAPIClientConfigFromEnvFile() ApiConfig {
-	siteURL := getEnvVariable(envSiteURL)
-	clientID := getEnvVariable(envClientID)
-	clientSecret := getEnvVariable(envClientSecret)
-	scope := getEnvVariable(envScope)
-	redirectURL := getEnvVariable(envRedirectUrl)
-	language := getEnvVariable(envLang)
-
+// GetAPIClientConfig returns oauth2.Config
+func GetAPIClientConfig(siteURL string, clientID string, clientSecret string, scope string, redirectURL string, language string) ApiConfig {
 	if len(clientID) == 0 || len(clientSecret) == 0 || len(language) == 0 || len(siteURL) == 0 || len(scope) == 0 || len(redirectURL) == 0 {
-		log.Fatalf("Error loading values from .env file")
+		log.Fatalf("configuration error: SITE_URL, CLIENT_ID, CLIENT_SECRET, SCOPE, REDIRECT_URL and API_LANG must be set")
 	}
 
 	oauthConf := oauth2.Config{
@@ -73,19 +65,6 @@ func GetAPIClientConfigFromEnvFile() ApiConfig {
 		RedirectURL: redirectURL,
 	}
 	return ApiConfig{oauthConf, siteURL}
-}
-
-func getEnvVariable(key string) string {
-	path, err := os.Getwd()
-	if err != nil {
-		log.Println(err)
-	}
-
-	err = godotenv.Load(path + "/.env")
-	if err != nil {
-		log.Fatalf("Error loading .env file")
-	}
-	return os.Getenv(key)
 }
 
 func connect(config oauth2.Config, client ApiClientActions) {
