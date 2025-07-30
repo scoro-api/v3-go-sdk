@@ -4,7 +4,6 @@ import (
 	"context"
 	"golang.org/x/oauth2"
 	"log"
-	"os"
 )
 
 const envSiteURL = "SITE_URL"
